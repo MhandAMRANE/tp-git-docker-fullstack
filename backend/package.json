@@ -1,7 +1,6 @@
 {
   "name": "car-rental-backend",
   "version": "1.0.0",
-  "description": "Backend API for car rental application (Node.js, Express, MySQL)",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
