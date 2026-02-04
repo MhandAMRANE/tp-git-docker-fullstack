@@ -44,17 +44,21 @@ services:
     networks:
       - app-network
 
-  # Backend (Node.js) - À configurer par l'équipe backend
-  # backend:
-  #   build: ./backend
-  #   container_name: car-rental-backend
-  #   restart: always
-  #   ports:
-  #     - "5000:5000"
-  #   depends_on:
-  #     - mysql-db
-  #   networks:
-  #     - app-network
+  backend:
+    build: ./backend
+    container_name: car-rental-backend
+    restart: always
+    environment:
+      PORT: 3000
+      DB_HOST: mysql-db
+      DB_USER: caruser
+      DB_PASSWORD: carpass
+      DB_NAME: car_rental
+    depends_on:
+      - mysql-db
+    networks:
+      - app-network
+
 
 volumes:
   mysql-data:
