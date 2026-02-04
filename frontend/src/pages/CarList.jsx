@@ -18,9 +18,7 @@ export default function CarList() {
                 if (mounted) setLoading(false);
             }
         })();
-        return () => {
-            mounted = false;
-        };
+        return () => (mounted = false);
     }, []);
 
     if (loading) return <p>Chargement…</p>;
@@ -28,18 +26,47 @@ export default function CarList() {
 
     return (
         <div>
-            <h2>Voitures</h2>
+            <div className="row" style={{ justifyContent: "space-between" }}>
+                <h2 style={{ margin: 0 }}>Voitures</h2>
+                <button className="btn primary" disabled>
+                    + Ajouter
+                </button>
+            </div>
+
             {cars.length === 0 ? (
                 <p>Aucune voiture.</p>
             ) : (
-                <ul>
-                    {cars.map((c) => (
-                        <li key={c.id}>
-                            {c.brand} {c.model} — {c.price_per_day}€/jour —{" "}
-                            {c.available ? "Disponible" : "Indisponible"}
-                        </li>
-                    ))}
-                </ul>
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>Marque</th>
+                            <th>Modèle</th>
+                            <th>Année</th>
+                            <th>Prix/jour</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {cars.map((c) => (
+                            <tr key={c.id}>
+                                <td>{c.brand}</td>
+                                <td>{c.model}</td>
+                                <td>{c.year}</td>
+                                <td>{c.price_per_day} €</td>
+                                <td>
+                                    <span className="badge">
+                                        {c.available ? "Disponible" : "Indisponible"}
+                                    </span>
+                                </td>
+                                <td className="row" style={{ gap: 8 }}>
+                                    <button className="btn" disabled>Modifier</button>
+                                    <button className="btn danger" disabled>Supprimer</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             )}
         </div>
     );
