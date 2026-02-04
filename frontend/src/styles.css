@@ -161,11 +161,9 @@ body{
   font-size: 18px;
 }
 
-.page{
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px 16px;
-}
+.page { max-width: 100%; }
+.hero-wide { max-width: 1200px; margin: 12px auto 0; }
+
 
 .hero-wide{
   margin-top: 12px;

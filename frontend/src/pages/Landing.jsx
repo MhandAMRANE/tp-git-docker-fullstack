@@ -1,54 +1,95 @@
 export default function Landing({ onGo }) {
     return (
-        <div className="page">
-            <div className="hero-wide fade-in">
+        <div className="page fade-in">
+            <div className="hero-wide">
                 <div className="spread">
                     <div>
-                        <h1 style={{ margin: 0, fontSize: 44, letterSpacing: -0.8 }}>CarRental</h1>
+                        <h1 style={{ margin: 0, fontSize: 44, letterSpacing: -0.8 }}>
+                            Location de voitures
+                        </h1>
                         <p style={{ margin: "8px 0 0 0", color: "rgba(255,255,255,0.7)", maxWidth: 720 }}>
-                            Louez une voiture en quelques secondes. Gestion des véhicules (CRUD),
-                            interface moderne et application conteneurisée avec Docker.
+                            Trouvez la voiture idéale au meilleur prix — réservation rapide, annulation simple.
                         </p>
                     </div>
 
                     <div className="row">
-                        <button className="btn primary" onClick={onGo}>Accéder au dashboard</button>
-                        <span className="badge"><span className="dot" /> API via Docker</span>
+                        <button className="btn primary" onClick={onGo}>Voir les voitures</button>
+                        <span className="badge"><span className="dot" /> Réservation instantanée</span>
                     </div>
                 </div>
 
+                {/* Barre de recherche (UI seulement) */}
+                <div className="cardx" style={{ marginTop: 14 }}>
+                    <div className="cards">
+                        <div className="col-4">
+                            <label className="label">Ville</label>
+                            <input className="input" placeholder="Ex: Paris" />
+                        </div>
+
+                        <div className="col-4">
+                            <label className="label">Date de départ</label>
+                            <input className="input" type="date" />
+                        </div>
+
+                        <div className="col-4">
+                            <label className="label">Date de retour</label>
+                            <input className="input" type="date" />
+                        </div>
+
+                        <div className="col-12 row" style={{ justifyContent: "flex-end" }}>
+                            <button className="btn primary" onClick={onGo}>Rechercher</button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Avantages */}
                 <div className="cards" style={{ marginTop: 14 }}>
                     <div className="cardx col-4">
                         <div className="kpi">
                             <div>
-                                <div className="k">Rapide</div>
-                                <div className="v">React</div>
-                                <div className="k">UI + Nginx</div>
+                                <div className="k">Choix</div>
+                                <div className="v">+50</div>
+                                <div className="k">véhicules disponibles</div>
                             </div>
-                            <div className="icon">⚡</div>
+                            <div className="icon">🚗</div>
                         </div>
                     </div>
 
                     <div className="cardx col-4">
                         <div className="kpi">
                             <div>
-                                <div className="k">Fiable</div>
-                                <div className="v">MySQL</div>
-                                <div className="k">CRUD + API</div>
+                                <div className="k">Prix</div>
+                                <div className="v">Top</div>
+                                <div className="k">offres / jour</div>
                             </div>
-                            <div className="icon">🛡️</div>
+                            <div className="icon">💶</div>
                         </div>
                     </div>
 
                     <div className="cardx col-4">
                         <div className="kpi">
                             <div>
-                                <div className="k">Pro</div>
-                                <div className="v">Docker</div>
-                                <div className="k">Compose</div>
+                                <div className="k">Support</div>
+                                <div className="v">24/7</div>
+                                <div className="k">assistance</div>
                             </div>
-                            <div className="icon">🐳</div>
+                            <div className="icon">🛟</div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Section bas de page */}
+            <div className="cards" style={{ marginTop: 14 }}>
+                <div className="cardx col-12">
+                    <div className="spread">
+                        <div>
+                            <div style={{ fontWeight: 800, fontSize: 18 }}>Prêt à réserver ?</div>
+                            <div style={{ color: "rgba(255,255,255,0.7)", marginTop: 6 }}>
+                                Accédez à la liste des voitures et gérez vos véhicules.
+                            </div>
+                        </div>
+                        <button className="btn primary" onClick={onGo}>Accéder</button>
                     </div>
                 </div>
             </div>
