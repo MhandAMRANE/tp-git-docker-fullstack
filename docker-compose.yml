@@ -1,5 +1,79 @@
 services:
+<<<<<<< Updated upstream
   frontend:
     build: ./frontend
     ports:
       - "8081:80"
+=======
+  mysql-db:
+    build: ./database
+    container_name: car-rental-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: car_rental
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: caruser
+      MYSQL_PASSWORD: carpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    container_name: car-rental-backend
+    restart: always
+    environment:
+      PORT: 3000
+      DB_HOST: mysql-db
+      DB_USER: caruser
+      DB_PASSWORD: carpass
+      DB_NAME: car_rental
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    container_name: car-rental-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: car-rental-phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql-db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql-db
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge
+>>>>>>> Stashed changes
