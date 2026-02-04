@@ -1,74 +1,45 @@
-# 🗄️ Database - Système de Location de Voitures
+# Database
 
-## 📋 Structure de la Base de Données
+## Structure de la Base de Donnees
 
-### Table: **voitures**
-```sql
-- id (INT, PRIMARY KEY, AUTO_INCREMENT)
-- marque (VARCHAR(50))
-- modele (VARCHAR(50))
-- annee (INT)
-- prix_par_jour (DECIMAL(10,2))
-- image_url (VARCHAR(255))
-- disponible (BOOLEAN)
-- created_at (TIMESTAMP)
-- updated_at (TIMESTAMP)
-```
+Base: car_rental
 
-### Table: **clients**
-```sql
-- id (INT, PRIMARY KEY, AUTO_INCREMENT)
-- nom (VARCHAR(50))
-- prenom (VARCHAR(50))
-- email (VARCHAR(100), UNIQUE)
-- telephone (VARCHAR(20))
-- created_at (TIMESTAMP)
-- updated_at (TIMESTAMP)
-```
+### Tables
 
-### Table: **locations**
-```sql
-- id (INT, PRIMARY KEY, AUTO_INCREMENT)
-- client_id (INT, FOREIGN KEY -> clients.id)
-- voiture_id (INT, FOREIGN KEY -> voitures.id)
+**cars**
+- id (INT, PRIMARY KEY)
+- brand (VARCHAR)
+- model (VARCHAR)
+- year (INT)
+- price_per_day (DECIMAL)
+- available (BOOLEAN)
+
+**clients**
+- id (INT, PRIMARY KEY)
+- nom (VARCHAR)
+- prenom (VARCHAR)
+- email (VARCHAR)
+- telephone (VARCHAR)
+
+**rentals**
+- id (INT, PRIMARY KEY)
+- client_id (INT, FOREIGN KEY)
+- car_id (INT, FOREIGN KEY)
 - date_debut (DATE)
 - date_fin (DATE)
-- prix_total (DECIMAL(10,2))
-- created_at (TIMESTAMP)
-- updated_at (TIMESTAMP)
+- prix_total (DECIMAL)
+
+## Utilisation
+
+Lancer avec Docker Compose:
+```
+docker-compose up -d mysql-db phpmyadmin
 ```
 
-## 🚀 Utilisation
+Configuration MySQL:
+- Database: car_rental
+- User: caruser
+- Password: carpass
+- Port: 3306
 
-### Avec Docker
-```bash
-# Construire l'image
-docker build -t location-voitures-db ./database
-
-# Lancer le conteneur
-docker run -d -p 3306:3306 --name mysql-db location-voitures-db
-```
-
-### Avec Docker Compose
-```bash
-docker-compose up -d
-```
-
-## 🔑 Credentials
-- **Database**: location_voitures
-- **Root Password**: rootpassword
-- **User**: user
-- **Password**: userpassword
-- **Port**: 3306
-
-## 📁 Fichiers
-
-- `init.sql` - Création des tables et de la structure
-- `seed.sql` - Données de test
-- `Dockerfile` - Configuration Docker pour MySQL
-- `README.md` - Documentation
-
-## 🔗 Relations
-
-- `locations.client_id` → `clients.id`
-- `locations.voiture_id` → `voitures.id`
+phpMyAdmin: http://localhost:8080
