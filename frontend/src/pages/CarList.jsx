@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { createCar, getCars } from "../services/api";
+import { createCar, deleteCar, getCars, updateCar } from "../services/api";
+
 
 const emptyForm = { brand: "", model: "", year: "", price_per_day: "", available: true };
 
@@ -11,6 +12,11 @@ export default function CarList() {
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState(emptyForm);
     const [saving, setSaving] = useState(false);
+
+    const [editingId, setEditingId] = useState(null);
+    const [editForm, setEditForm] = useState(emptyForm);
+    const [workingId, setWorkingId] = useState(null);
+
 
     async function refresh() {
         setLoading(true);
@@ -54,6 +60,59 @@ export default function CarList() {
 
     if (loading) return <p>Chargement…</p>;
     if (error) return <p style={{ color: "crimson" }}>{error}</p>;
+
+
+    function startEdit(car) {
+        setEditingId(car.id);
+        setEditForm({
+            brand: car.brand ?? "",
+            model: car.model ?? "",
+            year: String(car.year ?? ""),
+            price_per_day: String(car.price_per_day ?? ""),
+            available: Boolean(car.available),
+        });
+    }
+
+    function cancelEdit() {
+        setEditingId(null);
+        setEditForm(emptyForm);
+    }
+
+    async function saveEdit(id) {
+        setWorkingId(id);
+        setError("");
+        try {
+            const payload = {
+                brand: editForm.brand.trim(),
+                model: editForm.model.trim(),
+                year: Number(editForm.year),
+                price_per_day: Number(editForm.price_per_day),
+                available: Boolean(editForm.available),
+            };
+            await updateCar(id, payload);
+            cancelEdit();
+            await refresh();
+        } catch (e) {
+            setError(e.message || "Erreur modification");
+        } finally {
+            setWorkingId(null);
+        }
+    }
+
+    async function removeCar(id) {
+        if (!confirm("Supprimer cette voiture ?")) return;
+        setWorkingId(id);
+        setError("");
+        try {
+            await deleteCar(id);
+            await refresh();
+        } catch (e) {
+            setError(e.message || "Erreur suppression");
+        } finally {
+            setWorkingId(null);
+        }
+    }
+
 
     return (
         <div>
@@ -151,20 +210,75 @@ export default function CarList() {
                         </tr>
                     </thead>
                     <tbody>
-                        {cars.map((c) => (
-                            <tr key={c.id}>
-                                <td>{c.brand}</td>
-                                <td>{c.model}</td>
-                                <td>{c.year}</td>
-                                <td>{c.price_per_day} €</td>
-                                <td><span className="badge">{c.available ? "Disponible" : "Indisponible"}</span></td>
-                                <td className="row" style={{ gap: 8 }}>
-                                    <button className="btn" disabled>Modifier</button>
-                                    <button className="btn danger" disabled>Supprimer</button>
-                                </td>
-                            </tr>
-                        ))}
+                        {cars.map((c) => {
+                            const isEditing = editingId === c.id;
+                            const isWorking = workingId === c.id;
+
+                            return (
+                                <tr key={c.id}>
+                                    <td>
+                                        {isEditing ? (
+                                            <input className="input" value={editForm.brand}
+                                                onChange={(e) => setEditForm((f) => ({ ...f, brand: e.target.value }))} />
+                                        ) : c.brand}
+                                    </td>
+
+                                    <td>
+                                        {isEditing ? (
+                                            <input className="input" value={editForm.model}
+                                                onChange={(e) => setEditForm((f) => ({ ...f, model: e.target.value }))} />
+                                        ) : c.model}
+                                    </td>
+
+                                    <td>
+                                        {isEditing ? (
+                                            <input className="input" type="number" value={editForm.year}
+                                                onChange={(e) => setEditForm((f) => ({ ...f, year: e.target.value }))} />
+                                        ) : c.year}
+                                    </td>
+
+                                    <td>
+                                        {isEditing ? (
+                                            <input className="input" type="number" step="0.01" value={editForm.price_per_day}
+                                                onChange={(e) => setEditForm((f) => ({ ...f, price_per_day: e.target.value }))} />
+                                        ) : `${c.price_per_day} €`}
+                                    </td>
+
+                                    <td>
+                                        {isEditing ? (
+                                            <select className="input"
+                                                value={editForm.available ? "true" : "false"}
+                                                onChange={(e) => setEditForm((f) => ({ ...f, available: e.target.value === "true" }))}>
+                                                <option value="true">Oui</option>
+                                                <option value="false">Non</option>
+                                            </select>
+                                        ) : (
+                                            <span className="badge">{c.available ? "Disponible" : "Indisponible"}</span>
+                                        )}
+                                    </td>
+
+                                    <td className="row" style={{ gap: 8 }}>
+                                        {isEditing ? (
+                                            <>
+                                                <button className="btn" onClick={cancelEdit} disabled={isWorking}>Annuler</button>
+                                                <button className="btn primary" onClick={() => saveEdit(c.id)} disabled={isWorking}>
+                                                    {isWorking ? "..." : "Sauver"}
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button className="btn" onClick={() => startEdit(c)} disabled={isWorking}>Modifier</button>
+                                                <button className="btn danger" onClick={() => removeCar(c.id)} disabled={isWorking}>
+                                                    Supprimer
+                                                </button>
+                                            </>
+                                        )}
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
+
                 </table>
             )}
         </div>

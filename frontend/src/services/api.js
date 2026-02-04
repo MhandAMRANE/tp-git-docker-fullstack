@@ -1,10 +1,12 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
+
 export async function getCars() {
     const res = await fetch(`${API_URL}/api/cars`);
     if (!res.ok) throw new Error(`API error ${res.status}: ${await res.text()}`);
     return res.json();
 }
+
 
 export async function createCar(payload) {
     const res = await fetch(`${API_URL}/api/cars`, {
@@ -14,4 +16,24 @@ export async function createCar(payload) {
     });
     if (!res.ok) throw new Error(`API error ${res.status}: ${await res.text()}`);
     return res.json();
+}
+
+
+export async function updateCar(id, payload) {
+    const res = await fetch(`${API_URL}/api/cars/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`API error ${res.status}: ${await res.text()}`);
+    return res.json();
+}
+
+
+export async function deleteCar(id) {
+    const res = await fetch(`${API_URL}/api/cars/${id}`, {
+        method: "DELETE"
+    });
+    if (!res.ok) throw new Error(`API error ${res.status}: ${await res.text()}`);
+    return true;
 }
