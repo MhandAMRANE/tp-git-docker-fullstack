@@ -23,7 +23,7 @@ export default function CarList() {
             const data = await getCars();
             setCars(data);
         } catch (e) {
-            setError(e.message || "Erreur API");
+            setError("Impossible de contacter l’API. Vérifie que Docker Compose est lancé (backend + mysql).");
         } finally {
             setLoading(false);
         }
@@ -55,8 +55,8 @@ export default function CarList() {
             setForm(emptyForm);
             setShowForm(false);
             await refresh();
-        } catch (e2) {
-            setError(e2.message || "Erreur création");
+        } catch {
+            setError("Erreur lors de la création. Réessaye.");
         } finally {
             setSaving(false);
         }
@@ -92,8 +92,8 @@ export default function CarList() {
             await updateCar(id, payload);
             cancelEdit();
             await refresh();
-        } catch (e) {
-            setError(e.message || "Erreur modification");
+        } catch {
+            setError("Erreur lors de la modification.");
         } finally {
             setWorkingId(null);
         }
@@ -106,83 +106,113 @@ export default function CarList() {
         try {
             await deleteCar(id);
             await refresh();
-        } catch (e) {
-            setError(e.message || "Erreur suppression");
+        } catch {
+            setError("Erreur lors de la suppression.");
         } finally {
             setWorkingId(null);
         }
     }
 
-    if (loading) return <p className="fade-in">Chargement…</p>;
-    if (error) return <p className="fade-in" style={{ color: "#ff6b6b" }}>{error}</p>;
-
     return (
-        <div className="fade-in">
+        <div className="page fade-in">
             <div className="spread">
                 <div>
-                    <h1 style={{ margin: 0, fontSize: 30, letterSpacing: -0.4 }}>Dashboard</h1>
-                    <p style={{ margin: "6px 0 0 0", color: "rgba(255,255,255,0.65)" }}>
-                        Gestion des voitures (CRUD) — API via Docker Compose.
+                    <h1 style={{ margin: 0, fontSize: 32, letterSpacing: -0.6 }}>Dashboard</h1>
+                    <p style={{ margin: "8px 0 0 0", color: "rgba(255,255,255,0.70)" }}>
+                        Gestion des voitures (CRUD) — API via Docker.
                     </p>
                 </div>
 
                 <div className="row">
-                    <button className="btn primary" onClick={() => setShowForm((v) => !v)}>
-                        {showForm ? "Fermer" : "+ Ajouter une voiture"}
+                    <button className="btn primary" onClick={() => setShowForm((v) => !v)} disabled={loading}>
+                        {showForm ? "Fermer" : "+ Ajouter"}
+                    </button>
+                    <button className="btn" onClick={refresh} disabled={loading}>
+                        {loading ? "..." : "Rafraîchir"}
                     </button>
                 </div>
             </div>
 
-            <div className="grid-3">
-                <div className="stat">
-                    <div className="k">Total voitures</div>
-                    <div className="v">{stats.total}</div>
+            <div className="cards">
+                <div className="cardx col-4">
+                    <div className="kpi">
+                        <div>
+                            <div className="k">Total</div>
+                            <div className="v">{stats.total}</div>
+                            <div className="k">voitures</div>
+                        </div>
+                        <div className="icon">🚗</div>
+                    </div>
                 </div>
-                <div className="stat">
-                    <div className="k">Disponibles</div>
-                    <div className="v">{stats.dispo}</div>
+
+                <div className="cardx col-4">
+                    <div className="kpi">
+                        <div>
+                            <div className="k">Disponibles</div>
+                            <div className="v">{stats.dispo}</div>
+                            <div className="k">en stock</div>
+                        </div>
+                        <div className="icon">✅</div>
+                    </div>
                 </div>
-                <div className="stat">
-                    <div className="k">Prix moyen / jour</div>
-                    <div className="v">{stats.avg} €</div>
+
+                <div className="cardx col-4">
+                    <div className="kpi">
+                        <div>
+                            <div className="k">Prix moyen</div>
+                            <div className="v">{stats.avg} €</div>
+                            <div className="k">par jour</div>
+                        </div>
+                        <div className="icon">💶</div>
+                    </div>
                 </div>
             </div>
 
+            {error && (
+                <div className="cardx col-12" style={{ marginTop: 12, borderColor: "rgba(239,68,68,0.35)" }}>
+                    <div className="spread">
+                        <div>
+                            <div style={{ fontWeight: 700 }}>⚠️ Erreur</div>
+                            <div style={{ color: "rgba(255,255,255,0.75)", marginTop: 6 }}>{error}</div>
+                        </div>
+                        <button className="btn" onClick={refresh}>Réessayer</button>
+                    </div>
+                </div>
+            )}
+
             {showForm && (
-                <form onSubmit={onCreate} className="card fade-in" style={{ marginTop: 14 }}>
+                <form onSubmit={onCreate} className="cardx" style={{ marginTop: 12 }}>
                     <div className="spread">
                         <h2 style={{ margin: 0 }}>Ajouter une voiture</h2>
-                        <span className="badge">
-                            <span className="dot" /> Nouveau véhicule
-                        </span>
+                        <span className="badge"><span className="dot" /> Nouveau</span>
                     </div>
 
-                    <div className="grid-3" style={{ marginTop: 12 }}>
-                        <div>
+                    <div className="cards" style={{ marginTop: 12 }}>
+                        <div className="col-4">
                             <label className="label">Marque</label>
                             <input className="input" value={form.brand}
                                 onChange={(e) => setForm((f) => ({ ...f, brand: e.target.value }))} required />
                         </div>
 
-                        <div>
+                        <div className="col-4">
                             <label className="label">Modèle</label>
                             <input className="input" value={form.model}
                                 onChange={(e) => setForm((f) => ({ ...f, model: e.target.value }))} required />
                         </div>
 
-                        <div>
+                        <div className="col-4">
                             <label className="label">Année</label>
                             <input className="input" type="number" value={form.year}
                                 onChange={(e) => setForm((f) => ({ ...f, year: e.target.value }))} required />
                         </div>
 
-                        <div>
+                        <div className="col-4">
                             <label className="label">Prix / jour (€)</label>
                             <input className="input" type="number" step="0.01" value={form.price_per_day}
                                 onChange={(e) => setForm((f) => ({ ...f, price_per_day: e.target.value }))} required />
                         </div>
 
-                        <div>
+                        <div className="col-4">
                             <label className="label">Disponible</label>
                             <select className="input" value={form.available ? "true" : "false"}
                                 onChange={(e) => setForm((f) => ({ ...f, available: e.target.value === "true" }))}>
@@ -191,30 +221,35 @@ export default function CarList() {
                             </select>
                         </div>
 
-                        <div className="row" style={{ alignItems: "end", justifyContent: "flex-end" }}>
+                        <div className="col-4 row" style={{ justifyContent: "flex-end", alignItems: "end" }}>
                             <button className="btn" type="button" onClick={() => setShowForm(false)} disabled={saving}>
                                 Annuler
                             </button>
                             <button className="btn primary" type="submit" disabled={saving}>
-                                {saving ? "Enregistrement…" : "Créer"}
+                                {saving ? "..." : "Créer"}
                             </button>
                         </div>
                     </div>
                 </form>
             )}
 
-            <div className="card" style={{ marginTop: 14 }}>
+            <div className="cardx" style={{ marginTop: 12 }}>
                 <div className="spread">
-                    <h2 style={{ margin: 0 }}>Voitures</h2>
+                    <h2 style={{ margin: 0 }}>Liste des voitures</h2>
                     <span className="badge">
-                        <span className={"dot" + (stats.dispo ? "" : " off")} /> {stats.dispo} disponibles
+                        <span className={"dot" + (stats.dispo ? "" : " off")} />
+                        {stats.dispo} dispo / {stats.indispo} indispo
                     </span>
                 </div>
 
-                {cars.length === 0 ? (
-                    <p style={{ marginTop: 12, color: "rgba(255,255,255,0.7)" }}>Aucune voiture.</p>
+                {loading ? (
+                    <div className="empty-state" style={{ marginTop: 12 }}>Chargement…</div>
+                ) : cars.length === 0 ? (
+                    <div className="empty-state" style={{ marginTop: 12 }}>
+                        Aucune voiture. Clique sur <b>+ Ajouter</b> pour commencer.
+                    </div>
                 ) : (
-                    <table className="table">
+                    <table className="table" style={{ marginTop: 10 }}>
                         <thead>
                             <tr>
                                 <th>Marque</th>
@@ -222,7 +257,7 @@ export default function CarList() {
                                 <th>Année</th>
                                 <th>Prix/jour</th>
                                 <th>Statut</th>
-                                <th style={{ width: 220 }}>Actions</th>
+                                <th style={{ width: 230 }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
