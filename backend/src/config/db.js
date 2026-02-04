@@ -12,11 +12,11 @@ const db = mysql.createConnection(config);
 function connectWithRetry() {
   db.connect((err) => {
     if (err) {
-      console.error("❌ MySQL not ready, retry in 3s...", err.code);
+      console.error("❌ MySQL not ready, retrying in 3s...", err.code);
       setTimeout(connectWithRetry, 3000);
       return;
     }
-    console.log("✅ MySQL connected");
+    console.log("MySQL connected");
   });
 }
 
