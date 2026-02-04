@@ -11,3 +11,5 @@ const carRoutes = require("./routes/car.routes");
 app.use("/cars", carRoutes);
 const clientRoutes = require("./routes/client.routes");
 app.use("/api/clients", clientRoutes);
+const rentalRoutes = require("./routes/rental.routes");
+app.use("/api/rentals", rentalRoutes);
