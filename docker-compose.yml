@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # Base de données MySQL
   mysql-db:
@@ -9,17 +11,14 @@ services:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_USER: caruser
       MYSQL_PASSWORD: carpass
+    ports:
+      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
-  # phpMyAdmin
+  # phpMyAdmin pour gérer la base de données
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: car-rental-phpmyadmin
@@ -32,38 +31,30 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      mysql-db:
-        condition: service_healthy
+      - mysql-db
     networks:
       - app-network
 
-  # Backend Node.js
-  backend:
-    build: ./backend
-    container_name: car-rental-backend
-    restart: always
-    environment:
-      PORT: 3000
-      DB_HOST: mysql-db
-      DB_USER: caruser
-      DB_PASSWORD: carpass
-      DB_NAME: car_rental
-    depends_on:
-      mysql-db:
-        condition: service_healthy
-    networks:
-      - app-network
-
-  # Frontend React + nginx
+  # Frontend (React) - Configuré par l'équipe frontend
   frontend:
     build: ./frontend
     container_name: car-rental-frontend
     ports:
       - "8081:80"
-    depends_on:
-      - backend
     networks:
       - app-network
+
+  # Backend (Node.js) - À configurer par l'équipe backend
+  # backend:
+  #   build: ./backend
+  #   container_name: car-rental-backend
+  #   restart: always
+  #   ports:
+  #     - "5000:5000"
+  #   depends_on:
+  #     - mysql-db
+  #   networks:
+  #     - app-network
 
 volumes:
   mysql-data:
