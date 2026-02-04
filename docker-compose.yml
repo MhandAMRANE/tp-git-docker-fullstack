@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # Base de données MySQL
+  mysql-db:
+    build: ./database
+    container_name: car-rental-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: car_rental
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: caruser
+      MYSQL_PASSWORD: carpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # phpMyAdmin pour gérer la base de données
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: car-rental-phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql-db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql-db
+    networks:
+      - app-network
+
+  # Backend (Node.js) - À configurer par l'équipe backend
+  # backend:
+  #   build: ./backend
+  #   container_name: location-voitures-backend
+  #   restart: always
+  #   ports:
+  #     - "5000:5000"
+  #   depends_on:
+  #     - mysql-db
+  #   networks:
+  #     - app-network
+
+  # Frontend (React) - À configurer par l'équipe frontend
+  # frontend:
+  #   build: ./frontend
+  #   container_name: location-voitures-frontend
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge
