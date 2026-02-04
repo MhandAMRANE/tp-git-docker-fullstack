@@ -1,15 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 
+const carRoutes = require("./routes/car.routes");
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// API routes
+app.use("/api/cars", carRoutes);
+
+app.get("/", (req, res) => {
+  res.send("Car Rental API running");
+});
+
 module.exports = app;
-const carRoutes = require("./routes/car.routes");
-app.use("/cars", carRoutes);
-const clientRoutes = require("./routes/client.routes");
-app.use("/api/clients", clientRoutes);
-const rentalRoutes = require("./routes/rental.routes");
-app.use("/api/rentals", rentalRoutes);
