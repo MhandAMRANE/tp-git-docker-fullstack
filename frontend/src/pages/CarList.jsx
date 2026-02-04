@@ -117,9 +117,9 @@ export default function CarList() {
         <div className="page fade-in">
             <div className="spread">
                 <div>
-                    <h1 style={{ margin: 0, fontSize: 32, letterSpacing: -0.6 }}>Dashboard</h1>
-                    <p style={{ margin: "8px 0 0 0", color: "rgba(255,255,255,0.70)" }}>
-                        Gestion des voitures (CRUD) — API via Docker.
+                    <h1 style={{ margin: 0, fontSize: 30, letterSpacing: -0.6 }}>Dashboard</h1>
+                    <p style={{ margin: "8px 0 0 0", color: "var(--muted)" }}>
+                        Gestion des voitures (CRUD) — flotte & disponibilité.
                     </p>
                 </div>
 
@@ -169,13 +169,13 @@ export default function CarList() {
             </div>
 
             {error && (
-                <div className="cardx col-12" style={{ marginTop: 12, borderColor: "rgba(239,68,68,0.35)" }}>
+                <div className="cardx col-12" style={{ marginTop: 12, borderColor: "rgba(225,29,72,0.25)" }}>
                     <div className="spread">
                         <div>
-                            <div style={{ fontWeight: 700 }}>⚠️ Erreur</div>
-                            <div style={{ color: "rgba(255,255,255,0.75)", marginTop: 6 }}>{error}</div>
+                            <div style={{ fontWeight: 900, color: "var(--primary)" }}>⚠️ Erreur</div>
+                            <div style={{ color: "var(--muted)", marginTop: 6 }}>{error}</div>
                         </div>
-                        <button className="btn" onClick={refresh}>Réessayer</button>
+                        <button className="btn primary" onClick={refresh}>Réessayer</button>
                     </div>
                 </div>
             )}
@@ -183,8 +183,10 @@ export default function CarList() {
             {showForm && (
                 <form onSubmit={onCreate} className="cardx" style={{ marginTop: 12 }}>
                     <div className="spread">
-                        <h2 style={{ margin: 0 }}>Ajouter une voiture</h2>
-                        <span className="badge"><span className="dot" /> Nouveau</span>
+                        <h2 style={{ margin: 0, fontSize: 18 }}>Ajouter une voiture</h2>
+                        <span className="badge" style={{ borderColor: "rgba(225,29,72,0.25)" }}>
+                            <span className="dot" style={{ background: "var(--primary)" }} /> Nouveau
+                        </span>
                     </div>
 
                     <div className="cards" style={{ marginTop: 12 }}>
@@ -235,7 +237,7 @@ export default function CarList() {
 
             <div className="cardx" style={{ marginTop: 12 }}>
                 <div className="spread">
-                    <h2 style={{ margin: 0 }}>Liste des voitures</h2>
+                    <h2 style={{ margin: 0, fontSize: 18 }}>Liste des voitures</h2>
                     <span className="badge">
                         <span className={"dot" + (stats.dispo ? "" : " off")} />
                         {stats.dispo} dispo / {stats.indispo} indispo
@@ -249,90 +251,92 @@ export default function CarList() {
                         Aucune voiture. Clique sur <b>+ Ajouter</b> pour commencer.
                     </div>
                 ) : (
-                    <table className="table" style={{ marginTop: 10 }}>
-                        <thead>
-                            <tr>
-                                <th>Marque</th>
-                                <th>Modèle</th>
-                                <th>Année</th>
-                                <th>Prix/jour</th>
-                                <th>Statut</th>
-                                <th style={{ width: 230 }}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {cars.map((c) => {
-                                const isEditing = editingId === c.id;
-                                const isWorking = workingId === c.id;
+                    <div className="table-wrap">
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th>Marque</th>
+                                    <th>Modèle</th>
+                                    <th>Année</th>
+                                    <th>Prix/jour</th>
+                                    <th>Statut</th>
+                                    <th style={{ width: 230 }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {cars.map((c) => {
+                                    const isEditing = editingId === c.id;
+                                    const isWorking = workingId === c.id;
 
-                                return (
-                                    <tr key={c.id}>
-                                        <td>
-                                            {isEditing ? (
-                                                <input className="input" value={editForm.brand}
-                                                    onChange={(e) => setEditForm((f) => ({ ...f, brand: e.target.value }))} />
-                                            ) : c.brand}
-                                        </td>
+                                    return (
+                                        <tr key={c.id}>
+                                            <td>
+                                                {isEditing ? (
+                                                    <input className="input" value={editForm.brand}
+                                                        onChange={(e) => setEditForm((f) => ({ ...f, brand: e.target.value }))} />
+                                                ) : c.brand}
+                                            </td>
 
-                                        <td>
-                                            {isEditing ? (
-                                                <input className="input" value={editForm.model}
-                                                    onChange={(e) => setEditForm((f) => ({ ...f, model: e.target.value }))} />
-                                            ) : c.model}
-                                        </td>
+                                            <td>
+                                                {isEditing ? (
+                                                    <input className="input" value={editForm.model}
+                                                        onChange={(e) => setEditForm((f) => ({ ...f, model: e.target.value }))} />
+                                                ) : c.model}
+                                            </td>
 
-                                        <td>
-                                            {isEditing ? (
-                                                <input className="input" type="number" value={editForm.year}
-                                                    onChange={(e) => setEditForm((f) => ({ ...f, year: e.target.value }))} />
-                                            ) : c.year}
-                                        </td>
+                                            <td>
+                                                {isEditing ? (
+                                                    <input className="input" type="number" value={editForm.year}
+                                                        onChange={(e) => setEditForm((f) => ({ ...f, year: e.target.value }))} />
+                                                ) : c.year}
+                                            </td>
 
-                                        <td>
-                                            {isEditing ? (
-                                                <input className="input" type="number" step="0.01" value={editForm.price_per_day}
-                                                    onChange={(e) => setEditForm((f) => ({ ...f, price_per_day: e.target.value }))} />
-                                            ) : `${c.price_per_day} €`}
-                                        </td>
+                                            <td>
+                                                {isEditing ? (
+                                                    <input className="input" type="number" step="0.01" value={editForm.price_per_day}
+                                                        onChange={(e) => setEditForm((f) => ({ ...f, price_per_day: e.target.value }))} />
+                                                ) : `${c.price_per_day} €`}
+                                            </td>
 
-                                        <td>
-                                            {isEditing ? (
-                                                <select className="input"
-                                                    value={editForm.available ? "true" : "false"}
-                                                    onChange={(e) => setEditForm((f) => ({ ...f, available: e.target.value === "true" }))}>
-                                                    <option value="true">Oui</option>
-                                                    <option value="false">Non</option>
-                                                </select>
-                                            ) : (
-                                                <span className="badge">
-                                                    <span className={"dot" + (c.available ? "" : " off")} />
-                                                    {c.available ? "Disponible" : "Indisponible"}
-                                                </span>
-                                            )}
-                                        </td>
+                                            <td>
+                                                {isEditing ? (
+                                                    <select className="input"
+                                                        value={editForm.available ? "true" : "false"}
+                                                        onChange={(e) => setEditForm((f) => ({ ...f, available: e.target.value === "true" }))}>
+                                                        <option value="true">Oui</option>
+                                                        <option value="false">Non</option>
+                                                    </select>
+                                                ) : (
+                                                    <span className="badge" style={{ borderColor: c.available ? "rgba(22,163,74,0.25)" : "rgba(225,29,72,0.25)" }}>
+                                                        <span className={"dot" + (c.available ? "" : " off")} />
+                                                        {c.available ? "Disponible" : "Indisponible"}
+                                                    </span>
+                                                )}
+                                            </td>
 
-                                        <td className="row" style={{ gap: 8 }}>
-                                            {isEditing ? (
-                                                <>
-                                                    <button className="btn" onClick={cancelEdit} disabled={isWorking}>Annuler</button>
-                                                    <button className="btn primary" onClick={() => saveEdit(c.id)} disabled={isWorking}>
-                                                        {isWorking ? "..." : "Sauver"}
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <button className="btn" onClick={() => startEdit(c)} disabled={isWorking}>Modifier</button>
-                                                    <button className="btn danger" onClick={() => removeCar(c.id)} disabled={isWorking}>
-                                                        Supprimer
-                                                    </button>
-                                                </>
-                                            )}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                                            <td className="row" style={{ gap: 8 }}>
+                                                {isEditing ? (
+                                                    <>
+                                                        <button className="btn" onClick={cancelEdit} disabled={isWorking}>Annuler</button>
+                                                        <button className="btn primary" onClick={() => saveEdit(c.id)} disabled={isWorking}>
+                                                            {isWorking ? "..." : "Sauver"}
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button className="btn" onClick={() => startEdit(c)} disabled={isWorking}>Modifier</button>
+                                                        <button className="btn danger" onClick={() => removeCar(c.id)} disabled={isWorking}>
+                                                            Supprimer
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
         </div>

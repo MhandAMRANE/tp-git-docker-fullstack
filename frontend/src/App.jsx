@@ -15,8 +15,8 @@ export default function App() {
             <div className="brand" style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
               CarRental
             </div>
-            <span className="badge">
-              <span className="dot" /> Docker
+            <span className="badge" style={{ borderColor: "rgba(225,29,72,0.25)" }}>
+              <span className="dot" style={{ background: "var(--primary)" }} /> Location
             </span>
           </div>
 
